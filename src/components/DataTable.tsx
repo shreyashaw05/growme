@@ -41,8 +41,10 @@ export default function ArtworksDataTable() {
             setLoading(true);
 
             const response = await axios.get(
-                `https://api.artic.edu/api/v1/artworks?page=${pageNumber + 1}`
+                `https://api.artic.edu/api/v1/artworks?page=${pageNumber + 1}&limit=12`
             );
+            console.log("API Response:", response.data.data.length);
+            console.log("API Response:", response.data.data);
 
             const newData = response.data.data.map((item: ApiArtwork) => {
                 const { id, title, place_of_origin, artist_display, inscriptions, date_start, date_end } = item;
@@ -86,7 +88,7 @@ export default function ArtworksDataTable() {
                 while (remaining > 0 && page < Math.ceil(totalRecords / 12)) {
                     try {
                         const response = await axios.get(
-                            `https://api.artic.edu/api/v1/artworks?page=${page + 1}`
+                            `https://api.artic.edu/api/v1/artworks?page=${page + 1}&limit=12`
                         );
                         const pageData: number[] = response.data.data.map((item: ApiArtwork) => item.id);
 
@@ -128,8 +130,6 @@ export default function ArtworksDataTable() {
         setSelectedArtworks(newSelection);
         setSelectionLength(updatedIds.length);
     };
-
-    console.log("Total selected IDs:", selectedIds);
 
     return (
         <div className="card p-4" style={{ width: '90vw', overflow: 'auto', position: 'relative' }}>
@@ -184,7 +184,13 @@ export default function ArtworksDataTable() {
                     style={{ width: '200px', wordWrap: 'break-word', whiteSpace: 'normal' }}
                 />
                 <Column
-                    header="Date Range"
+                    field="date_start"
+                    header="Start Date"
+                    style={{ width: '100px', wordWrap: 'break-word', whiteSpace: 'normal' }}
+                />
+                <Column
+                    field="date_end"
+                    header="End Date"
                     style={{ width: '100px', wordWrap: 'break-word', whiteSpace: 'normal' }}
                 />
             </DataTable>
