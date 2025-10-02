@@ -1,10 +1,10 @@
-import BasicDemo from './components/DataTable'
+import ArtworksDataTable from './components/DataTable'
 
 function App() {
 
   return (
     <>
-    <BasicDemo/>
+    <ArtworksDataTable/>
     </>
   )
 }
