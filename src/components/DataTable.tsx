@@ -31,15 +31,18 @@ interface ApiArtwork {
 export default function ArtworksDataTable() {
     const [data, setData] = useState<ArtworkData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [selectionLength, setSelectionLength] = useState<number>(0);
     const [selectedArtworks, setSelectedArtworks] = useState<ArtworkData[]>([]);
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+    const [changedSelctionList, setChangedSelectionList] = useState<ArtworkData[]>([]);
     const totalRecords = 120;
+
     async function getData(pageNumber:number) {
         try {
             setLoading(true);
            
             
-            const response = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${pageNumber}`)              
+            const response = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${pageNumber+1}`)              
          
                 const newData = response.data.data.map((item: ApiArtwork) => {
                     const { id, title, place_of_origin, artist_display, inscriptions, date_start, date_end } = item;
@@ -61,10 +64,25 @@ export default function ArtworksDataTable() {
         }
     }
     useEffect(() => {
-        getData(1);
+        getData(0);
     }, []);
 
+    useEffect(() => {
+        if (selectionLength > 0 && !loading && (selectionLength - ((activeTabIndex) * 12)) > 0) {
+
+            console.log("Selection length for page:", activeTabIndex, (selectionLength - ((activeTabIndex) * 12)));
+            const selected = data.slice(0, (selectionLength - (activeTabIndex * 12)));
+            console.log("Selected Artworks inside useEffect:", selected);
+            console.log("Changed Selection List:", changedSelctionList);
+            selected.filter(artwork => changedSelctionList.includes(artwork));
+            console.log("Final Selected Artworks:", selected);
+            setSelectedArtworks(selected);
+        }
+    }, [selectionLength, activeTabIndex, loading,changedSelctionList])
+    
+console.log(changedSelctionList)
     const handlePageChange = (event: { page: number; first: number; rows: number }) => {
+        console.log('Page changed to:', event.page);
         setActiveTabIndex(event.page);
         getData(event.page)
     };
@@ -78,7 +96,9 @@ export default function ArtworksDataTable() {
                 showGridlines
                 stripedRows
                 selection={selectedArtworks}
-                onSelectionChange={(e) => setSelectedArtworks(e.value as ArtworkData[])}
+                onSelectionChange={(e) => {setSelectedArtworks(e.value as ArtworkData[])
+                    setChangedSelectionList(e.value as ArtworkData[])
+                }}
                 selectionMode="multiple"
                 dataKey="id"
                 emptyMessage="No artworks found."
@@ -95,7 +115,7 @@ export default function ArtworksDataTable() {
                     headerStyle={{ width: '5rem' }}
                     header={() => (
                         <div className="flex items-center gap-1">
-                            <SelectionOverLay/>
+                            <SelectionOverLay selectionLength={selectionLength} setSelectionLength={setSelectionLength}/>
                         </div>
                     )}
                 />

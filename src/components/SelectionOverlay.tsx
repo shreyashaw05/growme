@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { ChevronDown } from "lucide-react";
 
-const SelectionOverLay = () => {
+const SelectionOverLay = (props: { selectionLength: number, setSelectionLength: (length: number) => void }) => {
     const op = useRef<OverlayPanel>(null);
 
+    const [value, setValue] = useState<number>(15);
     return (
         <>
             <button onClick={(e) => op.current?.toggle(e)}>
@@ -14,14 +15,16 @@ const SelectionOverLay = () => {
                 <div className="flex gap-2 p-2">
                     <input 
                         type="number" 
+                        value={value}
                         className='border-zinc-400 border rounded px-2 py-1'
                         placeholder="Enter value"
+                        onChange={(e) => setValue(e.target.value === '' ? 0 : Number(e.target.value))}
                     />
                     <button 
                         type="button"
                         className="bg-zinc-800 hover:bg-zinc-950 text-white px-3 py-1 rounded"
                         onClick={() => {
-                            console.log('Submit clicked');
+                            props.setSelectionLength(value as number);
                         }}
                     >
                         Submit
