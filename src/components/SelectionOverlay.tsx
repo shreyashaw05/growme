@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 const SelectionOverLay = (props: { selectionLength: number, setSelectionLength: (length: number) => void }) => {
     const op = useRef<OverlayPanel>(null);
 
-    const [value, setValue] = useState<number>(15);
+    const [value, setValue] = useState<number|''>('');
     return (
         <>
             <button onClick={(e) => op.current?.toggle(e)}>
@@ -18,13 +18,14 @@ const SelectionOverLay = (props: { selectionLength: number, setSelectionLength: 
                         value={value}
                         className='border-zinc-400 border rounded px-2 py-1'
                         placeholder="Enter value"
-                        onChange={(e) => setValue(e.target.value === '' ? 0 : Number(e.target.value))}
+                        onChange={(e) => setValue(e.target.value === '' ? '' : Number(e.target.value))}
                     />
                     <button 
                         type="button"
                         className="bg-zinc-800 hover:bg-zinc-950 text-white px-3 py-1 rounded"
                         onClick={() => {
                             props.setSelectionLength(value as number);
+                            op.current?.hide();
                         }}
                     >
                         Submit

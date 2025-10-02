@@ -29,8 +29,6 @@ interface ApiArtwork {
 export default function ArtworksDataTable() {
     const [data, setData] = useState<ArtworkData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
-    // Selection states
     const [selectionLength, setSelectionLength] = useState<number>(0);
     const [selectedArtworks, setSelectedArtworks] = useState<ArtworkData[]>([]);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -102,7 +100,6 @@ export default function ArtworksDataTable() {
                         break;
                     }
                 }
-
                 setSelectedIds(ids);
             };
 
@@ -121,14 +118,8 @@ export default function ArtworksDataTable() {
 
     const handleSelectionChange = (e: any) => {
         const newSelection = e.value as ArtworkData[];
-
-        // IDs on current page
         const currentPageIds = data.map(item => item.id);
-
-        // Keep selections from other pages
         const otherPageIds = selectedIds.filter(id => !currentPageIds.includes(id));
-
-        // Add new selections from current page
         const newSelectedIds = newSelection.map(item => item.id);
 
         const updatedIds = [...otherPageIds, ...newSelectedIds];
